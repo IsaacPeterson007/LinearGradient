@@ -1,4 +1,6 @@
-<svg viewBox="0 0 10 10">
+<!-- COMMENT TO INDICATE THIS IS OURS -->
+
+<svg viewBox="0 0 10 10" nti-linear-gradient="true">
   <defs>
     <linearGradient id="myGradient" gradientTransform="rotate(0)">
       <stop offset="0%"  stop-color="white" />

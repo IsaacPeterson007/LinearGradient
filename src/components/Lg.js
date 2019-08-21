@@ -5,14 +5,7 @@ export default class Lg extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            red1: 0,
-            green1: 0,
-            blue1: 0,
-            r2: 0,
-            g2: 0,
-            b2: 0,
-            s1: 0,
-            s2: 0
+
         }
     }
 
@@ -21,8 +14,8 @@ export default class Lg extends Component {
             <svg viewBox="0 0 10 1">
                 <defs>
                     <linearGradient id="myGradient" gradientTransform="rotate(0)">
-                        <stop offset="0%" stopColor={`rgb(${this.state.red1}, ${this.state.green1}, ${this.state.blue1})`}/>
-                        <stop offset="100%" stopColor={`rgb(${this.state.red2}, ${this.state.green2}, ${this.state.blue2})`}/>
+                        <stop offset={`${this.props.stop1}`} stopColor={`rgb(${this.props.red1}, ${this.props.green1}, ${this.props.blue1})`}/>
+                        <stop offset={`${this.props.stop2}`} stopColor={`rgb(${this.props.red2}, ${this.props.green2}, ${this.props.blue2})`}/>
                     </linearGradient>
                 </defs>
 
