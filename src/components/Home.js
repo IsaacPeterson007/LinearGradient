@@ -48,6 +48,10 @@ export default class Home extends Component {
         this.setState({showRightPicker: true})
     }
 
+    saveStuff = () => {
+        console.log("Saving Some Stuff");
+    }
+
 
     // STYLES
     leftBtn() {
@@ -76,7 +80,6 @@ export default class Home extends Component {
     }
     pickerr(){
         if(this.state.showLeftPicker){
-            console.log("show go LEFT");
             return{
                 width: '100%',
                 block: "inline-block",
@@ -84,7 +87,6 @@ export default class Home extends Component {
             }
         }
         if(this.state.showRightPicker){
-            console.log("show go RIGHT");
             return{
                 width: '100%',
                 block: "inline-block",
@@ -98,10 +100,11 @@ export default class Home extends Component {
         return (
             <div>
                 <h1>Linear Gradient Test</h1>
+                <button onClick={this.saveStuff}>SaveSomeStuff</button>
 
                 <Lg red1={this.state.color1.r} green1={this.state.color1.g} blue1={this.state.color1.b}
                     red2={this.state.color2.r} green2={this.state.color2.g} blue2={this.state.color2.b}
-                    stop1={(100-this.state.stop).toString() + "%"} stop2={(100-this.state.stop).toString() + "%"} />
+                    stop1={this.state.stop.toString() + "%"} stop2={"0%"} />
 
 
                 <div style={{ width: '100%' }}>
@@ -115,7 +118,7 @@ export default class Home extends Component {
 
                 <div style={{width: '100%'}}>
                     {(this.state.showLeftPicker || this.state.showRightPicker) ? (
-                        <SketchPicker disableAlpha="true" style={this.pickerr()} color={this.state.color1} 
+                        <SketchPicker disableAlpha="true" style={this.pickerr()} color={this.state.showLeftPicker ? this.state.color1 : this.state.color2} 
                         onChangeComplete={this.state.showLeftPicker ? this.onColor1Change : this.onColor2Change} />
                         ) : (<br></br>
                         )
