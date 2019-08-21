@@ -5,7 +5,7 @@ export default class Slider extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            startingValue: 0,
+
         }
     }
 
@@ -14,7 +14,7 @@ export default class Slider extends Component {
     render() {
         return (
             <div>
-                <input type="range" min="0%" max="100%" 
+                <input type="range" min="0" max="100" 
                 onChange={this.props.onChange}></input>
             </div>
         )
