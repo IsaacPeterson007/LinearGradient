@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import Lg from './Lg';
 import Slider from './Slider';
 import { SketchPicker } from 'react-color';
-
+import axios from 'axios'
 
 export default class Home extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            results: "no call made",
             color1: {
                 r: 0,
                 g: 0,
@@ -49,7 +50,8 @@ export default class Home extends Component {
     }
 
     saveStuff = () => {
-        console.log("Saving Some Stuff");
+        axios.get("http://localhost:8000/lgApi")
+        .catch(err => () => {console.log(err)});
     }
 
 
@@ -99,13 +101,12 @@ export default class Home extends Component {
     render() {
         return (
             <div>
-                <h1>Linear Gradient Test</h1>
+                <h1>Linear Gradient {this.state.results}</h1>
                 <button onClick={this.saveStuff}>SaveSomeStuff</button>
 
                 <Lg red1={this.state.color1.r} green1={this.state.color1.g} blue1={this.state.color1.b}
                     red2={this.state.color2.r} green2={this.state.color2.g} blue2={this.state.color2.b}
-                    stop1={this.state.stop.toString() + "%"} stop2={"0%"} />
-
+                    stop1={this.state.stop.toString() + "%"} stop2={"100%"} />
 
                 <div style={{ width: '100%' }}>
                     <button style={this.leftBtn()} onClick={this.onLeftBtnClicked}></button>

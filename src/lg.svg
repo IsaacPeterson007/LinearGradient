@@ -1,6 +1,6 @@
-<!-- COMMENT TO INDICATE THIS IS OURS -->
+<!-- Generator: Nextthought Linear Gradient -->
 
-<svg viewBox="0 0 10 10" nti-linear-gradient="true">
+<svg xmlns:nti="https://SomethingOrOtherHere" xmlns:svg="http://www.w3.org/2000/svg" nti-linear-gradient="true" viewBox="0 0 10 10" >
   <defs>
     <linearGradient id="myGradient" gradientTransform="rotate(0)">
       <stop offset="0%"  stop-color="white" />

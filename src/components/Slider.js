@@ -9,8 +9,6 @@ export default class Slider extends Component {
         }
     }
 
-
-
     render() {
         return (
             <div>
