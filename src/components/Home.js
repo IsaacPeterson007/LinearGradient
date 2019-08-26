@@ -4,6 +4,7 @@ import Slider from './Slider';
 import { SketchPicker } from 'react-color';
 import axios from 'axios';
 
+
 export default class Home extends Component {
 
     constructor(props) {
@@ -24,16 +25,29 @@ export default class Home extends Component {
             stop: 50,
             showLeftPicker: false,
             showRightPicker: false,
-            SvgString: '',
+            svgString: '',
+            src: null,
         }
     }
 
     componentDidMount() {
         axios.get('http://localhost:8000/svg')
         .then(res => 
-            this.setState({SvgString: JSON.stringify(res.data)})
+            this.setState({svgString: JSON.stringify(res.data)})
         )
+        .then(this.updateLg())
     }
+
+    updateLg(){
+        const svg = this.state.svgString;
+        const blob = new Blob([svg], {type: 'image/svg+xml'});
+        const url = URL.createObjectURL(blob);
+        const image = document.createElement('img');
+        image.addEventListener('load', () => URL.revokeObjectURL(url),{once:true});
+        image.src = url;
+        this.setState({src: image.src})
+    }
+
 
     onStopChange = (e) => {
         this.setState({ stop: e.target.value });
@@ -57,16 +71,7 @@ export default class Home extends Component {
     }
 
     saveStuff = () => {
-        const svg = 
-        `<!--our comments go here></our-->
-        <svg viewBox='0 0 10 1'>
-            <defs>
-                <linearGradient id='myGradient' gradientTransform='rotate(0)'>
-                <stop offset=${this.state.stop}' stopColor='rgb(${this.state.color1.r}, ${this.state.color1.g}, ${this.state.color1.b})'/>
-                <stop offset=${this.props.stop}' stopColor='rgb(${this.state.color2.r}, ${this.state.color2.g}, ${this.state.color2.b})'/>
-                </linearGradient>
-            </defs><rect width='100%' height='100%' fill='url("#myGradient")' />
-        </svg>`;
+        const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 1'><defs><linearGradient id='myGradient' gradientTransform='rotate(0)'><stop offset=${this.state.stop}' stopColor='rgb(${this.state.color1.r}, ${this.state.color1.g}, ${this.state.color1.b})'/><stop offset=${this.props.stop}' stopColor='rgb(${this.state.color2.r}, ${this.state.color2.g}, ${this.state.color2.b})'/></linearGradient></defs><rect width='100%' height='100%' fill='url("#myGradient")' /></svg>`;
         
         //MAYBE TO GET BLOG INTO IMAGE AT START
         //const blob = new Blob([svg], {type: 'image/svg+xml'});
@@ -148,7 +153,7 @@ export default class Home extends Component {
                     <rect width="100%" height="100%" fill="url('#myGradient')" />
                 </svg>
 
-                {/* <img src="logo.svg" width="100%" height="100%"></img> */}
+                <img src={this.state.src} alt={this.state.src} width="100%" height="100%"></img>
 
                 <div style={{ width: '100%' }}>
                     <button style={this.leftBtn()} onClick={this.onLeftBtnClicked}></button>
