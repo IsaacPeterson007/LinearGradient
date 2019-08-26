@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import Lg from './Lg';
 import Slider from './Slider';
 import { SketchPicker } from 'react-color';
-import axios from 'axios'
+import axios from 'axios';
 
 export default class Home extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            results: "no call made",
             color1: {
                 r: 0,
                 g: 0,
@@ -25,7 +24,15 @@ export default class Home extends Component {
             stop: 50,
             showLeftPicker: false,
             showRightPicker: false,
+            SvgString: '',
         }
+    }
+
+    componentDidMount() {
+        axios.get('http://localhost:8000/svg')
+        .then(res => 
+            this.setState({SvgString: JSON.stringify(res.data)})
+        )
     }
 
     onStopChange = (e) => {
@@ -50,8 +57,29 @@ export default class Home extends Component {
     }
 
     saveStuff = () => {
-        axios.get("http://localhost:8000/lgApi")
-        .catch(err => () => {console.log(err)});
+        const svg = 
+        `<!--our comments go here></our-->
+        <svg viewBox='0 0 10 1'>
+            <defs>
+                <linearGradient id='myGradient' gradientTransform='rotate(0)'>
+                <stop offset=${this.state.stop}' stopColor='rgb(${this.state.color1.r}, ${this.state.color1.g}, ${this.state.color1.b})'/>
+                <stop offset=${this.props.stop}' stopColor='rgb(${this.state.color2.r}, ${this.state.color2.g}, ${this.state.color2.b})'/>
+                </linearGradient>
+            </defs><rect width='100%' height='100%' fill='url("#myGradient")' />
+        </svg>`;
+        
+        //MAYBE TO GET BLOG INTO IMAGE AT START
+        //const blob = new Blob([svg], {type: 'image/svg+xml'});
+        // const url = URL.createObjectURL(blob);
+        // const image = document.createElement('img');
+        // image.addEventListener('load', () => URL.revokeObjectURL(url),{once: true});
+        // image.src = url;
+        //const file = new Blob(svg, {type: 'image/svg+xml'})
+
+        axios.post('http://localhost:8000/upload', svg)
+        .then(function (res) {
+            console.log(res);
+        });
     }
 
 
@@ -101,12 +129,26 @@ export default class Home extends Component {
     render() {
         return (
             <div>
-                <h1>Linear Gradient {this.state.results}</h1>
+                <h1>Linear Gradient</h1>
                 <button onClick={this.saveStuff}>SaveSomeStuff</button>
 
-                <Lg red1={this.state.color1.r} green1={this.state.color1.g} blue1={this.state.color1.b}
+                {/* <Lg red1={this.state.color1.r} green1={this.state.color1.g} blue1={this.state.color1.b}
                     red2={this.state.color2.r} green2={this.state.color2.g} blue2={this.state.color2.b}
-                    stop1={this.state.stop.toString() + "%"} stop2={"100%"} />
+                    stop1={this.state.stop.toString() + "%"} stop2={"100%"} /> */}
+
+                <svg viewBox="0 0 10 1">
+                    <defs>
+                        <linearGradient id="myGradient" gradientTransform="rotate(0)">
+                            <stop offset={`${this.state.stop.toString() + "%"}`}
+                                stopColor={`rgb(${this.state.color1.r}, ${this.state.color1.g}, ${this.state.color1.b})`}/>
+                            <stop offset={"100%"}
+                                stopColor={`rgb(${this.state.color2.r}, ${this.state.color2.g}, ${this.state.color2.b})`}/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url('#myGradient')" />
+                </svg>
+
+                {/* <img src="logo.svg" width="100%" height="100%"></img> */}
 
                 <div style={{ width: '100%' }}>
                     <button style={this.leftBtn()} onClick={this.onLeftBtnClicked}></button>
