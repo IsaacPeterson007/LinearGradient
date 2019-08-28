@@ -29,19 +29,19 @@ export default class Home extends Component {
     //PULL 
     //-----IF SVG DOESNT EXIST, WE SHOULD HAVE A DEFAULT GRADIENT AVAILABLE TO GRAB
     componentDidMount() {
+        console.log("component mounted");
+
         axios.get('http://localhost:8000/svg')
             .then(res =>
                 this.setState({ svgString: res.data }),
             )
-            .then(() => {
-                this.svgToImg(this.state.svgString);
-            })
     }
 
     //converts svg string to img element
     //source: https://medium.com/@benjamin.black/using-blob-from-svg-text-as-image-source-2a8947af7a8e
-    svgToImg(s) {
-        const svg = s;
+    componentDidUpdate() {
+        console.log("updated");
+        const svg = this.imgToSvg();
         const blob = new Blob([svg], { type: 'image/svg+xml' });
         const url = URL.createObjectURL(blob);
         const image = document.getElementById('img');
@@ -70,7 +70,15 @@ export default class Home extends Component {
     }
     
     onStopChange = (e) => {
-        this.setState({ stop: e.target.value });
+        console.log(e.target.value);
+        if(e.target.value<50){
+            this.setState({ stop1: 0 });
+            this.setState({ stop2: e.target.value*2});
+        }
+        if(e.target.value>=50){
+            this.setState({ stop1: -e.target.value*20});
+            this.setState({ stop2: 100});
+        }
     }
 
     onColor1Change = (e) => {
@@ -144,8 +152,9 @@ export default class Home extends Component {
                     <button style={this.leftBtn()} onClick={this.onLeftBtnClicked}></button>
                     <button style={this.rightBtn()} onClick={this.onRightBtnClicked}></button>
                     <div style={this.centerSlider()}>
-                        <h5>Stopper</h5>
-                        <Slider onChange={this.onStopChange} />
+                        {/* <h5>Stopper</h5>
+                        <Slider onChange={this.onStopChange} /> */}
+
                     </div>
                 </div>
 
