@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Slider from './Slider';
+//import Slider from './Slider';
 import { SketchPicker } from 'react-color';
 import axios from 'axios';
 
@@ -26,22 +26,35 @@ export default class Home extends Component {
         }
     }
 
-    //PULL 
-    //-----IF SVG DOESNT EXIST, WE SHOULD HAVE A DEFAULT GRADIENT AVAILABLE TO GRAB
+    //GET
     componentDidMount() {
-        console.log("component mounted");
-
         axios.get('http://localhost:8000/svg')
             .then(res =>
-                this.setState({ svgString: res.data }),
+                this.setData(res.data),
             )
+    }
+
+    //data from file is used to set state, if data is empty, use default values
+    setData(data){
+
+        if(typeof data === 'undefined' || data == null || data === ''){
+            this.componentDidUpdate();
+        }
+        else{
+            this.setState({
+                color1: data.color1,
+                color2: data.color2,
+                stop1: data.stop1,
+                stop2: data.stop2,
+                svgString: data.svg,
+            })
+        }
     }
 
     //converts svg string to img element
     //source: https://medium.com/@benjamin.black/using-blob-from-svg-text-as-image-source-2a8947af7a8e
     componentDidUpdate() {
-        console.log("updated");
-        const svg = this.imgToSvg();
+        var svg = this.imgToSvg();
         const blob = new Blob([svg], { type: 'image/svg+xml' });
         const url = URL.createObjectURL(blob);
         const image = document.getElementById('img');
@@ -51,6 +64,7 @@ export default class Home extends Component {
 
     imgToSvg() {
         return `
+            <!-- nti-linear-gradient -->
             <svg xmlns="http://www.w3.org/2000/svg">"
             <defs>
                     <linearGradient id="Gradient" gradientTransform="rotate(0)" viewBox="0 0 10 1">
@@ -63,23 +77,20 @@ export default class Home extends Component {
     }
     
     saveStuff = () => {
-        const svg = {
+        var svg = {
+            "color1":this.state.color1,
+            "color2":this.state.color2,
+            "stop1":this.state.stop1.toString(),
+            "stop2":this.state.stop2.toString(),
             "svg":this.imgToSvg(),
         }
+
         axios.post('http://localhost:8000/upload', svg);
     }
     
-    onStopChange = (e) => {
-        console.log(e.target.value);
-        if(e.target.value<50){
-            this.setState({ stop1: 0 });
-            this.setState({ stop2: e.target.value*2});
-        }
-        if(e.target.value>=50){
-            this.setState({ stop1: -e.target.value*20});
-            this.setState({ stop2: 100});
-        }
-    }
+    // onStopChange = (e) => {
+    //    this.setState({stop1: e.target.value})    
+    // }
 
     onColor1Change = (e) => {
         this.setState({ color1: e.rgb });
@@ -117,12 +128,12 @@ export default class Home extends Component {
             backgroundColor: `rgb(${this.state.color2.r}, ${this.state.color2.g}, ${this.state.color2.b})`
         }
     };
-    centerSlider() {
-        return {
-            width: '100%',
-            textAlign: 'center',
-        }
-    }
+    // centerSlider() {
+    //     return {
+    //         width: '100%',
+    //         textAlign: 'center',
+    //     }
+    // }
 
     render() {
         return (
@@ -130,32 +141,16 @@ export default class Home extends Component {
                 <h1>Linear Gradient</h1>
                 <button onClick={this.saveStuff}>SaveSomeStuff</button>
 
-                {/* <Lg red1={this.state.color1.r} green1={this.state.color1.g} blue1={this.state.color1.b}
-                    red2={this.state.color2.r} green2={this.state.color2.g} blue2={this.state.color2.b}
-                    stop1={this.state.stop.toString() + "%"} stop2={"100%"} /> */}
-
-                {/* <svg viewBox="0 0 10 1">
-                    <defs>
-                        <linearGradient id="myGradient" gradientTransform="rotate(0)">
-                            <stop offset={`${this.state.stop.toString() + "%"}`}
-                                stopColor={`rgb(${this.state.color1.r}, ${this.state.color1.g}, ${this.state.color1.b})`}/>
-                            <stop offset={"100%"}
-                                stopColor={`rgb(${this.state.color2.r}, ${this.state.color2.g}, ${this.state.color2.b})`}/>
-                        </linearGradient>
-                    </defs>
-                    <rect width="100%" height="100%" fill="url('#myGradient')" />
-                </svg> */}
-
-                {this.state.svgString ? <img id="img" width="100%" height="100%"></img> : <p>cannot load svg...</p>}
+                <img id="img" alt="img cannot load" width="100%" height="100%"></img>
 
                 <div style={{ width: '100%' }}>
                     <button style={this.leftBtn()} onClick={this.onLeftBtnClicked}></button>
                     <button style={this.rightBtn()} onClick={this.onRightBtnClicked}></button>
-                    <div style={this.centerSlider()}>
-                        {/* <h5>Stopper</h5>
-                        <Slider onChange={this.onStopChange} /> */}
-
-                    </div>
+                    {/* SLIDER */}
+                    {/* <div style={this.centerSlider()}>
+                        <h5>Stopper</h5>
+                        <Slider onChange={this.onStopChange} value={this.state.stop1}/>
+                    </div> */}
                 </div>
 
                 <div style={{ width: '100%' }}>

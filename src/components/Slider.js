@@ -13,7 +13,7 @@ export default class Slider extends Component {
         return (
             <div>
                 <input type="range" min="0" max="100" 
-                onChange={this.props.onChange}></input>
+                onChange={this.props.onChange} value={this.props.value}></input>
             </div>
         )
     }

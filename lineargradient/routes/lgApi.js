@@ -22,10 +22,7 @@ app.get('/svg', (req, res) => {
 
 //POST svg to server (just local files for now)
 app.post('/upload', (req, res) => {
-
-  var svg = req.body.svg;
-
-  fsExtra.outputFile('../../src/Temp.svg', svg, 'utf-8', (err) =>{ 
+  fsExtra.outputFile('../../src/Temp.svg', JSON.stringify(req.body), 'utf-8', (err) =>{ 
       if(err) console.log(err);
   })
 })
