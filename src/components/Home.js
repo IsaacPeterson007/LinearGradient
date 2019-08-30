@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-//import Slider from './Slider';
+import Slider from './Slider';
 import { SketchPicker } from 'react-color';
 import axios from 'axios';
+import Lg from './Lg';
 
 export default class Home extends Component {
 
@@ -41,7 +42,7 @@ export default class Home extends Component {
     setData(data){
 
         if(typeof data === 'undefined' || data == null || data === ''){
-            this.componentDidUpdate();
+            //this.componentDidUpdate();
         }
         else{
             this.setState({
@@ -57,14 +58,14 @@ export default class Home extends Component {
     //converts svg string to img element
     //source: https://medium.com/@benjamin.black/using-blob-from-svg-text-as-image-source-2a8947af7a8e
     componentDidUpdate() {
-        var svg = this.imgToSvg();
-        const blob = new Blob([svg], { type: 'image/svg+xml' });
-        const url = URL.createObjectURL(blob);
-        const image = document.getElementById('img');
-        image.addEventListener('load', () => URL.revokeObjectURL(url), { once: true });
-        image.src = url;
+        // var svg = this.imgToSvg();
+        // const blob = new Blob([svg], { type: 'image/svg+xml' });
+        // const url = URL.createObjectURL(blob);
+        // const image = document.getElementById('img');
+        // image.addEventListener('load', () => URL.revokeObjectURL(url), { once: true });
+        // image.src = url;
     }
-
+    
     imgToSvg() {
         return `
             <!-- nti-linear-gradient -->
@@ -91,9 +92,9 @@ export default class Home extends Component {
         axios.post('http://localhost:8000/upload', svg);
     }
     
-    // onStopChange = (e) => {
-    //    this.setState({stop1: e.target.value})    
-    // }
+    onStopChange = (e) => {
+       this.setState({stop1: e.target.value})    
+    }
 
     onColor1Change = (e) => {
         this.setState({ color1: e.rgb });
@@ -141,12 +142,12 @@ export default class Home extends Component {
             float: 'right'
         }
     };
-    // centerSlider() {
-    //     return {
-    //         width: '100%',
-    //         textAlign: 'center',
-    //     }
-    // }
+    centerSlider() {
+        return {
+            width: '100%',
+            textAlign: 'center',
+        }
+    }
 
     render() {
         return (
@@ -154,16 +155,20 @@ export default class Home extends Component {
                 <h1>Linear Gradient</h1>
                 <button onClick={this.saveStuff}>SaveSomeStuff</button>
 
-                <img id="img" alt="img cannot load" width="100%" height="100%"></img>
+                <Lg red1={this.state.color1.r} green1={this.state.color1.g} blue1={this.state.color1.b}
+                    red2={this.state.color2.r} green2={this.state.color2.g} blue2={this.state.color2.b}
+                    stop1={this.state.stop1.toString() + "%"} stop2={"100%"} />
+
+                {/* <img id="img" alt="img cannot load" width="100%" height="100%"></img> */}
 
                 <div style={{ width: '100%' }}>
                     <button style={this.leftBtn()} onClick={this.onLeftBtnClicked}></button>
                     <button style={this.rightBtn()} onClick={this.onRightBtnClicked}></button>
                     {/* SLIDER */}
-                    {/* <div style={this.centerSlider()}>
+                    <div style={this.centerSlider()}>
                         <h5>Stopper</h5>
                         <Slider onChange={this.onStopChange} value={this.state.stop1}/>
-                    </div> */}
+                    </div>
                 </div>
 
                 <div style={this.state.showLeftPicker ? this.left() : this.right()}>

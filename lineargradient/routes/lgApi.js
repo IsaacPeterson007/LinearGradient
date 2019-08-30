@@ -18,7 +18,14 @@ app.get('/', (req, res) => {
 app.get('/svg', (req, res) => {
   fs.readFile(path, 'utf-8', function(err, contents){
     if(err) console.log(err);
-    res.send(contents);
+
+    //check for nti tag
+    expr = /nti-linear-gradient/;
+    if(expr.test(contents)){
+      res.send(contents);
+    }else{
+      res.status(500).send('svg not marked by nextthought');
+    }
   })
 })
 
