@@ -32,6 +32,9 @@ export default class Home extends Component {
             .then(res =>
                 this.setData(res.data),
             )
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     //data from file is used to set state, if data is empty, use default values
@@ -101,12 +104,12 @@ export default class Home extends Component {
     }
 
     onLeftBtnClicked = () => {
-        this.setState({ showLeftPicker: true })
+        this.setState({ showLeftPicker: !this.state.showLeftPicker })
         this.setState({ showRightPicker: false })
     }
     onRightBtnClicked = () => {
         this.setState({ showLeftPicker: false })
-        this.setState({ showRightPicker: true })
+        this.setState({ showRightPicker: !this.state.showRightPicker })
     }
 
     // STYLES
@@ -126,6 +129,16 @@ export default class Home extends Component {
             block: "inline-block",
             float: 'right',
             backgroundColor: `rgb(${this.state.color2.r}, ${this.state.color2.g}, ${this.state.color2.b})`
+        }
+    };
+    left(){
+        return {
+            float: 'left'
+        }
+    };
+    right(){
+        return {
+            float: 'right'
         }
     };
     // centerSlider() {
@@ -153,10 +166,10 @@ export default class Home extends Component {
                     </div> */}
                 </div>
 
-                <div style={{ width: '100%' }}>
+                <div style={this.state.showLeftPicker ? this.left() : this.right()}>
                     {(this.state.showLeftPicker || this.state.showRightPicker) ? (
                         <SketchPicker disableAlpha={true} color={this.state.showLeftPicker ? this.state.color1 : this.state.color2}
-                            onChangeComplete={this.state.showLeftPicker ? this.onColor1Change : this.onColor2Change} />
+                            onChangeComplete={this.state.showLeftPicker ? this.onColor1Change : this.onColor2Change}/>
                     ) : (<br></br>
                         )
                     }

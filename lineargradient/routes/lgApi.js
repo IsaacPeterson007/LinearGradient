@@ -7,6 +7,8 @@ var cors = require('cors');
 app.use(cors());
 app.use(express.json());
 
+var path = '../../src/Temp.svg';
+
 //default get
 app.get('/', (req, res) => {
 	res.send('PORT 8000');
@@ -14,7 +16,7 @@ app.get('/', (req, res) => {
 
 //GET the svg from server (just local files for now)
 app.get('/svg', (req, res) => {
-  fs.readFile('../../src/Temp.svg', 'utf-8', function(err, contents){
+  fs.readFile(path, 'utf-8', function(err, contents){
     if(err) console.log(err);
     res.send(contents);
   })
@@ -22,7 +24,7 @@ app.get('/svg', (req, res) => {
 
 //POST svg to server (just local files for now)
 app.post('/upload', (req, res) => {
-  fsExtra.outputFile('../../src/Temp.svg', JSON.stringify(req.body), 'utf-8', (err) =>{ 
+  fsExtra.outputFile(path, JSON.stringify(req.body), 'utf-8', (err) =>{ 
       if(err) console.log(err);
   })
 })
