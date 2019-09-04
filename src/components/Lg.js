@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
-const {parse, stringify} = require('svgson');
 
 export default class Lg extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            
+        }
     }
 
     componentDidUpdate(){
-        this.props.stops.map((stop) => {
-            console.log(stop.attributes);
-        })
+        // console.log(this.props.stops);
+        // this.props.stops.map((stop) => {
+        //     console.log(stop.attributes.stopcolor.nodeValue);
+        // })
     }
 
     render() {
@@ -19,12 +22,9 @@ export default class Lg extends Component {
             <svg viewBox="0 0 10 1">
                 <defs>
                     <linearGradient id="myGradient" gradientTransform="rotate(0)">
-                        {/* <stop offset={`${this.props.stop1}`} stopColor={`rgb(${this.props.red1}, ${this.props.green1}, ${this.props.blue1})`}/>
-                        <stop offset={`${this.props.stop2}`} stopColor={`rgb(${this.props.red2}, ${this.props.green2}, ${this.props.blue2})`}/> */}
-                        {this.props.stops.map((stop, i)=>{
-                            return <stop key={i} offset={stop.attributes.offset} stopColor={stop.attributes.stopColor}/>
-                        
-                        })}
+                        {this.props.stops.map((stop, i) => 
+                            <stop key={i} offset={stop.attributes.offset.nodeValue} stopColor={stop.attributes.stopcolor.nodeValue}/>
+                        )}
                     </linearGradient>
                 </defs>
 

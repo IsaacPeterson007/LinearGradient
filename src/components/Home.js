@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import Slider from './Slider';
-import { SketchPicker } from 'react-color';
+//import { SketchPicker } from 'react-color';
 import axios from 'axios';
 import Lg from './Lg';
-
-var colorParse = require('color-parse');
+import CustomPicker from './CustomPicker';
 
 export default class Home extends Component {
 
@@ -31,54 +30,22 @@ export default class Home extends Component {
             })
     }
 
-    //data from file is used to set state, if data is empty, use default values
+    //set string to inner html and get object data for editor
     setData(data){
-        //svgson to parse svg to object
-        parse(data, {camelCase: true}).then(json => {
-
-            var stopList = [];
-
-            //get list of stops from svg object
-            json.children[1].children[0].children.forEach(function(child) {
-                stopList = [...stopList, child];
-            })
-            //set list to state
-            this.setState({stops: stopList});
-        });
+        var temp = document.createElement('div');
+        temp.innerHTML = data;
+        const nodelist = temp.querySelectorAll('stop');
+        const tempStops = Array.from(nodelist);
+        this.setState({stops: tempStops});      
     }
 
-
-    //converts svg string to img element
-    //source: https://medium.com/@benjamin.black/using-blob-from-svg-text-as-image-source-2a8947af7a8e
-    componentDidUpdate() {
-        // var svg = this.imgToSvg();
-        // const blob = new Blob([svg], { type: 'image/svg+xml' });
-        // const url = URL.createObjectURL(blob);
-        // const image = document.getElementById('img');
-        // image.addEventListener('load', () => URL.revokeObjectURL(url), { once: true });
-        // image.src = url;
-    }
-    
-    imgToSvg() {
-        return `
-            <!-- nti-linear-gradient -->
-            <svg xmlns="http://www.w3.org/2000/svg">"
-            <defs>
-                    <linearGradient id="Gradient" gradientTransform="rotate(0)" viewBox="0 0 10 1">
-                        <stop offset='${this.state.stop1.toString() + "%"}' stop-color='rgb(${this.state.color1.r}, ${this.state.color1.g}, ${this.state.color1.b})' />
-                        <stop offset='${this.state.stop2.toString() + "%"}' stop-color='rgb(${this.state.color2.r}, ${this.state.color2.g}, ${this.state.color2.b})' />
-                    </linearGradient>
-                </defs>
-                <rect x="0" y="0" height="100%" width="100%"  fill="url(#Gradient)" />
-            </svg>`;
-    }
-
+    //save from object to string before writing out
     toSvg(){
         return `
-        <!-- nti-linear-gradient test-->
-        <svg xmlns="http://www.w3.org/2000/svg">"
+        <!-- nti-linear-gradient-->
+        <svg xmlns="http://www.w3.org/2000/svg">
         <defs>
-                <linearGradient id="Gradient" gradientTransform="rotate(0)" viewBox="0 0 10 1">` 
+                <linearGradient id="Gradient" gradientTransform="rotate(0)" viewBox="0 0 10 1">`
                 + this.printStops() + 
                 `</linearGradient>
             </defs>
@@ -86,16 +53,16 @@ export default class Home extends Component {
         </svg>`;
     }
 
-    printStops(){
-        var s = "";
-        this.state.stops.map((stop) => {
-            s += stringify(stop)
+    printStops() {
+        var s = '';
+        this.state.stops.map((stop, i) => {
+            s += `<stop offset="${stop.attributes.offset.nodeValue}" stopColor="${stop.attributes.stopcolor.nodeValue}"/>`
         })
-
         return s;
     }
     
     saveStuff = () => {
+        this.printStops();
         axios.post('http://localhost:8000/upload', this.toSvg());
     }
     
@@ -120,6 +87,8 @@ export default class Home extends Component {
         this.setState({ showRightPicker: !this.state.showRightPicker })
     }
 
+    handleColorChange = ({ e }) => console.log(e)
+
     // STYLES
     leftBtn() {
         return {
@@ -127,7 +96,7 @@ export default class Home extends Component {
             height: '50px',
             block: "inline-block",
             float: 'left',
-            backgroundColor: `rgb(${this.state.color1.r}, ${this.state.color1.g}, ${this.state.color1.b})`
+            //backgroundColor: `rgb(${this.state.color1.r}, ${this.state.color1.g}, ${this.state.color1.b})`
         }
     };
     rightBtn() {
@@ -136,7 +105,7 @@ export default class Home extends Component {
             height: '50px',
             block: "inline-block",
             float: 'right',
-            backgroundColor: `rgb(${this.state.color2.r}, ${this.state.color2.g}, ${this.state.color2.b})`
+            //backgroundColor: `rgb(${this.state.color2.r}, ${this.state.color2.g}, ${this.state.color2.b})`
         }
     };
     left(){
@@ -171,8 +140,6 @@ export default class Home extends Component {
 
                 <Lg stops={this.state.stops} />
 
-                {/* <img id="img" alt="img cannot load" width="100%" height="100%"></img> */}
-
                 <div style={{ width: '100%' }}>
                     <button style={this.leftBtn()} onClick={this.onLeftBtnClicked}></button>
                     <button style={this.rightBtn()} onClick={this.onRightBtnClicked}></button>
@@ -185,8 +152,9 @@ export default class Home extends Component {
 
                 <div style={this.state.showLeftPicker ? this.left() : this.right()}>
                     {(this.state.showLeftPicker || this.state.showRightPicker) ? (
-                        <SketchPicker disableAlpha={true} color={this.state.showLeftPicker ? this.state.color1 : this.state.color2}
-                            onChangeComplete={this.state.showLeftPicker ? this.onColor1Change : this.onColor2Change}/>
+                        // <SketchPicker disableAlpha={true} color={this.state.showLeftPicker ? this.state.color1 : this.state.color2}
+                        //     onChangeComplete={this.state.showLeftPicker ? this.onColor1Change : this.onColor2Change}/>
+                        <CustomPicker onChange={this.handleColorChange} />
                     ) : (<br></br>
                         )
                     }
