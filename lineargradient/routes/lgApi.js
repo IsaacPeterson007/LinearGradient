@@ -5,9 +5,23 @@ const fs = require('fs');
 const fsExtra = require('fs-extra');
 var cors = require('cors');
 app.use(cors());
-app.use(express.json());
+app.use(rawBody);
+//app.use(express.json());
 
 var path = '../../src/Temp.svg';
+
+//raw body function for text not json
+//source: https://stackoverflow.com/questions/12345166/how-to-force-parse-request-body-as-plain-text-instead-of-json-in-express
+function rawBody(req, res, next){
+  req.setEncoding('utf8');
+  req.rawBody = '';
+  req.on('data', function(chunk) {
+    req.rawBody += chunk;
+  });
+  req.on('end', function(){
+    next();
+  });
+}
 
 //default get
 app.get('/', (req, res) => {
@@ -31,7 +45,7 @@ app.get('/svg', (req, res) => {
 
 //POST svg to server (just local files for now)
 app.post('/upload', (req, res) => {
-  fsExtra.outputFile(path, JSON.stringify(req.body), 'utf-8', (err) =>{ 
+  fsExtra.outputFile(path, JSON.stringify(req.rawBody), 'utf-8', (err) =>{ 
       if(err) console.log(err);
   })
 })

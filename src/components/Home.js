@@ -4,29 +4,22 @@ import { SketchPicker } from 'react-color';
 import axios from 'axios';
 import Lg from './Lg';
 
+var colorParse = require('color-parse');
+
 export default class Home extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            color1: {
-                r: 0,
-                g: 0,
-                b: 0,
-            },
-            color2: {
-                r: 255,
-                g: 255,
-                b: 255,
-            },
-            stop1: 0,
-            stop2: 100,
+            rotation: null,        
+            stops: [],
             showLeftPicker: false,
             showRightPicker: false,
             svgString: null,
         }
-    }
 
+    }
+    
     //GET
     componentDidMount() {
         axios.get('http://localhost:8000/svg')
@@ -40,20 +33,20 @@ export default class Home extends Component {
 
     //data from file is used to set state, if data is empty, use default values
     setData(data){
+        //svgson to parse svg to object
+        parse(data, {camelCase: true}).then(json => {
 
-        if(typeof data === 'undefined' || data == null || data === ''){
-            //this.componentDidUpdate();
-        }
-        else{
-            this.setState({
-                color1: data.color1,
-                color2: data.color2,
-                stop1: data.stop1,
-                stop2: data.stop2,
-                svgString: data.svg,
+            var stopList = [];
+
+            //get list of stops from svg object
+            json.children[1].children[0].children.forEach(function(child) {
+                stopList = [...stopList, child];
             })
-        }
+            //set list to state
+            this.setState({stops: stopList});
+        });
     }
+
 
     //converts svg string to img element
     //source: https://medium.com/@benjamin.black/using-blob-from-svg-text-as-image-source-2a8947af7a8e
@@ -79,17 +72,31 @@ export default class Home extends Component {
                 <rect x="0" y="0" height="100%" width="100%"  fill="url(#Gradient)" />
             </svg>`;
     }
+
+    toSvg(){
+        return `
+        <!-- nti-linear-gradient test-->
+        <svg xmlns="http://www.w3.org/2000/svg">"
+        <defs>
+                <linearGradient id="Gradient" gradientTransform="rotate(0)" viewBox="0 0 10 1">` 
+                + this.printStops() + 
+                `</linearGradient>
+            </defs>
+            <rect x="0" y="0" height="100%" width="100%"  fill="url(#Gradient)" />
+        </svg>`;
+    }
+
+    printStops(){
+        var s = "";
+        this.state.stops.map((stop) => {
+            s += stringify(stop)
+        })
+
+        return s;
+    }
     
     saveStuff = () => {
-        var svg = {
-            "color1":this.state.color1,
-            "color2":this.state.color2,
-            "stop1":this.state.stop1.toString(),
-            "stop2":this.state.stop2.toString(),
-            "svg":this.imgToSvg(),
-        }
-
-        axios.post('http://localhost:8000/upload', svg);
+        axios.post('http://localhost:8000/upload', this.toSvg());
     }
     
     onStopChange = (e) => {
@@ -149,15 +156,20 @@ export default class Home extends Component {
         }
     }
 
+    
+
     render() {
+
         return (
             <div>
                 <h1>Linear Gradient</h1>
                 <button onClick={this.saveStuff}>SaveSomeStuff</button>
 
-                <Lg red1={this.state.color1.r} green1={this.state.color1.g} blue1={this.state.color1.b}
+                {/* <Lg red1={this.state.color1.r} green1={this.state.color1.g} blue1={this.state.color1.b}
                     red2={this.state.color2.r} green2={this.state.color2.g} blue2={this.state.color2.b}
-                    stop1={this.state.stop1.toString() + "%"} stop2={"100%"} />
+                    stop1={this.state.stop1.toString() + "%"} stop2={"100%"} /> */}
+
+                <Lg stops={this.state.stops} />
 
                 {/* <img id="img" alt="img cannot load" width="100%" height="100%"></img> */}
 
