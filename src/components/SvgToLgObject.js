@@ -1,14 +1,17 @@
-import React from 'react';
-const { svgParse, stringify } = require('svgson');
 
+//input string
+//output object
 export default function SvgToLgObject(svgString) {
+
+    if(!svgString.includes("nti-linear-gradient")){
+        console.warn("svg file wasnt from nti");
+        return null;
+    }
 
     //find attributes
     var json = {
         "rotation":'',
-        "stops":[
-
-        ],
+        "stops":[],
     };
 
     var temp = document.createElement('div');
