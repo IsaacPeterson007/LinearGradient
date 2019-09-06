@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import Slider from './Slider';
-//import { SketchPicker } from 'react-color';
 import axios from 'axios';
 import Lg from './Lg';
-import CustomPicker from './CustomPicker';
+import svgToObject from './SvgToLgObject';
 
 export default class Home extends Component {
 
@@ -12,11 +11,9 @@ export default class Home extends Component {
         this.state = {
             rotation: null,        
             stops: [],
-            showLeftPicker: false,
-            showRightPicker: false,
+            showPicker: false,
             svgString: null,
         }
-
     }
     
     //GET
@@ -36,6 +33,7 @@ export default class Home extends Component {
         temp.innerHTML = data;
         const nodelist = temp.querySelectorAll('stop');
         const tempStops = Array.from(nodelist);
+        console.log(svgToObject(data));
         this.setState({stops: tempStops});      
     }
 
@@ -56,58 +54,54 @@ export default class Home extends Component {
     printStops() {
         var s = '';
         this.state.stops.map((stop, i) => {
-            s += `<stop offset="${stop.attributes.offset.nodeValue}" stopColor="${stop.attributes.stopcolor.nodeValue}"/>`
+            s += `<stop offset="${stop.getAttribute('offset')}" stopColor="${stop.getAttribute('stopcolor')}"/>`
         })
         return s;
     }
     
     saveStuff = () => {
+
+        console.log(this.state.stops[0].getAttribute('stopcolor'));
+        console.log(this.state.stops[0].getAttribute('offset'));
+        
+
         this.printStops();
         axios.post('http://localhost:8000/upload', this.toSvg());
     }
     
-    onStopChange = (e) => {
-       this.setState({stop1: e.target.value})    
-    }
+    // onStopChange = (e) => {
+    //    this.setState({stop1: e.target.value})    
+    // }
 
-    onColor1Change = (e) => {
-        this.setState({ color1: e.rgb });
-    }
+    // onColor1Change = (e) => {
+    //     this.setState({ color1: e.rgb });
+    // }
 
-    onColor2Change = (e) => {
-        this.setState({ color2: e.rgb });
-    }
+    // onColor2Change = (e) => {
+    //     this.setState({ color2: e.rgb });
+    // }
 
-    onLeftBtnClicked = () => {
-        this.setState({ showLeftPicker: !this.state.showLeftPicker })
-        this.setState({ showRightPicker: false })
-    }
-    onRightBtnClicked = () => {
-        this.setState({ showLeftPicker: false })
-        this.setState({ showRightPicker: !this.state.showRightPicker })
-    }
-
-    handleColorChange = ({ e }) => console.log(e)
+    // onLeftBtnClicked = () => {
+    //     this.setState({ showLeftPicker: !this.state.showLeftPicker })
+    //     this.setState({ showRightPicker: false })
+    // }
+    // onRightBtnClicked = () => {
+    //     this.setState({ showLeftPicker: false })
+    //     this.setState({ showRightPicker: !this.state.showRightPicker })
+    // }
+    // onBtnClick = () => {
+    //     this.setState({showPicker: true})
+    // }
 
     // STYLES
-    leftBtn() {
+    btn(stop) {
         return {
             width: '50px',
             height: '50px',
             block: "inline-block",
-            float: 'left',
-            //backgroundColor: `rgb(${this.state.color1.r}, ${this.state.color1.g}, ${this.state.color1.b})`
+            backgroundColor: stop.attributes.stopcolor.nodeValue,
         }
-    };
-    rightBtn() {
-        return {
-            width: '50px',
-            height: '50px',
-            block: "inline-block",
-            float: 'right',
-            //backgroundColor: `rgb(${this.state.color2.r}, ${this.state.color2.g}, ${this.state.color2.b})`
-        }
-    };
+    }
     left(){
         return {
             float: 'left'
@@ -140,9 +134,12 @@ export default class Home extends Component {
 
                 <Lg stops={this.state.stops} />
 
-                <div style={{ width: '100%' }}>
-                    <button style={this.leftBtn()} onClick={this.onLeftBtnClicked}></button>
-                    <button style={this.rightBtn()} onClick={this.onRightBtnClicked}></button>
+                <div style={{ width: '100%'}}>
+                    {this.state.stops.map((stop, index) => 
+                        <button key={index} style={this.btn(stop)}>stop {index} </button>
+                    )}
+                    {/* <button style={this.leftBtn()} onClick={this.onLeftBtnClicked}></button>
+                    <button style={this.rightBtn()} onClick={this.onRightBtnClicked}></button> */}
                     {/* SLIDER */}
                     <div style={this.centerSlider()}>
                         <h5>Stopper</h5>
@@ -150,11 +147,9 @@ export default class Home extends Component {
                     </div>
                 </div>
 
-                <div style={this.state.showLeftPicker ? this.left() : this.right()}>
-                    {(this.state.showLeftPicker || this.state.showRightPicker) ? (
-                        // <SketchPicker disableAlpha={true} color={this.state.showLeftPicker ? this.state.color1 : this.state.color2}
-                        //     onChangeComplete={this.state.showLeftPicker ? this.onColor1Change : this.onColor2Change}/>
-                        <CustomPicker onChange={this.handleColorChange} />
+                <div >
+                    {(this.state.showPicker) ? (
+                        <input type="color" ></input>
                     ) : (<br></br>
                         )
                     }

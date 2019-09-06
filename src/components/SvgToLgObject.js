@@ -1,0 +1,29 @@
+import React from 'react';
+const { svgParse, stringify } = require('svgson');
+
+export default function SvgToLgObject(svgString) {
+
+    //find attributes
+    var json = {
+        "rotation":'',
+        "stops":[
+
+        ],
+    };
+
+    var temp = document.createElement('div');
+    temp.innerHTML = svgString;
+
+    //get rotation of svg
+    const rotation = temp.querySelector('linearGradient');
+    json.rotation = rotation.getAttribute('gradientTransform');
+
+    //make list of stops and add to json
+    const nodelist = temp.querySelectorAll('stop');
+    Array.from(nodelist).forEach((stop) => {
+        json.stops.push({"offset": stop.getAttribute('offset'), "stopcolor": stop.getAttribute('stopcolor')});
+    })  
+
+    return json;
+};
+
