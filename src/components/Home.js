@@ -27,7 +27,6 @@ export default class Home extends Component {
     }
 
     saveStuff = () => {
-        console.log(JSON.stringify(this.state.lgObject));
         axios.post('http://localhost:8000/upload', lgObjectToSvg(this.state.lgObject));
     }
 
