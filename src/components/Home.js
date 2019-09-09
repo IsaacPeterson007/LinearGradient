@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Lg from './Lg';
-import svgToLgObject from './svg-to-lg-object';
-import lgObjectToSvg from './lg-object-to-svg';
+import Slider from './Slider';
+import svgToLgObject from './svg-to-gradient-object';
+import lgObjectToSvg from './gradient-object-to-svg';
 
 export default class Home extends Component {
 
@@ -12,6 +13,7 @@ export default class Home extends Component {
             lgObject: {},
             showPicker: false,
             currentStop: null,
+            colors: [],
         }
     }
 
@@ -25,6 +27,7 @@ export default class Home extends Component {
                 console.log(err);
             })
     }
+    
 
     saveStuff = () => {
         axios.post('http://localhost:8000/upload', lgObjectToSvg(this.state.lgObject));
@@ -67,7 +70,7 @@ export default class Home extends Component {
 
         return (
             <div>
-                <h1>Linear Gradient</h1>
+                <h1>Linear Gradient Editor</h1>
                 <button onClick={this.saveStuff}>SaveSomeStuff</button>
 
                 <Lg lg={this.state.lgObject} />
@@ -76,6 +79,10 @@ export default class Home extends Component {
                     {stops.map((stop, index) =>
                         <button key={index} style={this.btn(stop)} onClick={() => this.onBtnClick(stop)}>stop {index} </button>
                     )}
+                </div>
+
+                <div>
+                    <Slider stops={this.state.lgObject.stops} />
                 </div>
 
                 <div >
