@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Slider from './Slider';
 import axios from 'axios';
 import Lg from './Lg';
 import svgToLgObject from './SvgToLgObject';
@@ -41,6 +40,7 @@ export default class Home extends Component {
         })
     }
 
+    //https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
     hexToRgb(hex) {
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[2], 16)})` : null;
@@ -60,14 +60,6 @@ export default class Home extends Component {
             backgroundColor: stop.stopcolor,
         }
     }
-    centerSlider() {
-        return {
-            width: '100%',
-            textAlign: 'center',
-        }
-    }
-
-
 
     render() {
 
@@ -81,13 +73,9 @@ export default class Home extends Component {
                 <Lg lg={this.state.lgObject} />
 
                 <div>
-                    {stops ? stops.map((stop, index) =>
+                    {stops.map((stop, index) =>
                         <button key={index} style={this.btn(stop)} onClick={() => this.onBtnClick(stop)}>stop {index} </button>
-                    ) : <p>gradient did not have tag</p>}
-                    {/* <div style={this.centerSlider()}>
-                        <h5>Stopper</h5>
-                        <Slider onChange={this.onStopChange} value={this.state.stop1}/>
-                    </div> */}
+                    )}
                 </div>
 
                 <div >
