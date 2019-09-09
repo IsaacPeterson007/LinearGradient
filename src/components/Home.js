@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Lg from './Lg';
-import svgToLgObject from './SvgToLgObject';
-import lgObjectToSvg from './LgObjectToSvg';
+import svgToLgObject from './svg-to-lg-object';
+import lgObjectToSvg from './lg-object-to-svg';
 
 export default class Home extends Component {
 
@@ -27,6 +27,7 @@ export default class Home extends Component {
     }
 
     saveStuff = () => {
+        console.log(JSON.stringify(this.state.lgObject));
         axios.post('http://localhost:8000/upload', lgObjectToSvg(this.state.lgObject));
     }
 
