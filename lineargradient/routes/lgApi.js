@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 8000;
+const port = 9000;
 const fs = require('fs');
 const fsExtra = require('fs-extra');
 var cors = require('cors');
@@ -25,7 +25,7 @@ function rawBody(req, res, next){
 
 //default get
 app.get('/', (req, res) => {
-	res.send('PORT 8000');
+	res.send('PORT 9000');
 })
 
 //GET the svg from server (just local files for now)

@@ -5,14 +5,13 @@ export default class Slider extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            colors: [],
+
         }
     }
 
 
-
     componentDidUpdate() {
-
+        
     }
 
     // STYLES
@@ -29,36 +28,49 @@ export default class Slider extends Component {
 
     handleLeft(stop){
         return{
-            height: '11px',
-            width: '11px',
+            height: '15px',
+            width: '15px',
             borderRadius: '50%',
             display: 'inline-block',
-            border: '2px solid black',
+            border: '1px solid black',
+            boxShadow: 'inset 0 0 0 2px rgb(255, 255, 255)',
             backgroundColor: stop.stopcolor,
             float: 'left',
+            cursor: 'pointer',
         }
     }
 
     handleRight(stop){
         return{
-            height: '11px',
-            width: '11px',
+            height: '15px',
+            width: '15px',
             borderRadius: '50%',
             display: 'inline-block',
-            border: '2px solid black',
+            border: '1px solid black',
+            boxShadow: 'inset 0 0 0 2px rgb(255, 255, 255)',
             backgroundColor: stop.stopcolor,
             float: 'right',
+            cursor: 'pointer',
         }
+    }
+
+    handleClick = () => {
+        console.log("clicked")
+    }
+
+    getStopPositions(numStops){
+        
     }
 
     render() {
 
+        // just two stops for now, just map through this.props.stops for multiple
         return (
             <div>
                 {this.props.stops ? 
                 (<div style={this.gradient()}>
-                    <span style={this.handleLeft(this.props.stops[0])}></span>
-                    <span style={this.handleRight(this.props.stops[1])}></span>
+                    <span onClick={() => this.props.onClick(this.props.stops[0])} style={this.handleLeft(this.props.stops[0])}></span>
+                    <span onClick={() => this.props.onClick(this.props.stops[1])} style={this.handleRight(this.props.stops[1])}></span>
                 </div>) 
                 : (<p>values not passed to slider</p>)}
             </div>
@@ -66,6 +78,7 @@ export default class Slider extends Component {
     }
 }
 
+//handle positions
 //1 = 50
 //2 = 0, 100
 //3 = 0, 50, 100
